@@ -26,7 +26,7 @@ repositories {
 ```groovy
 dependencies {
 
-    implementation 'dev.khvh:jacado:0.0.1'
+    implementation 'dev.khvh:jacado:0.0.3'
     implementation 'com.arangodb:arangodb-java-driver:6.16.1'
     implementation 'com.arangodb:jackson-dataformat-velocypack:3.0.0'
 
