@@ -15,8 +15,8 @@ Currently, hosted in GitHub packages.
 ```groovy
 repositories {
     maven {
-        name = "JacadoGitHub"
-        url = uri("https://maven.pkg.github.com/khvh/jacado")
+        name = "KHVH"
+        url = uri("https://mvn.kube.khvh.dev/artifactory/khvh/")
     }
 }
 ```

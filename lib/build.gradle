@@ -29,12 +29,12 @@ publishing {
 
   repositories {
     maven {
-      name = "GitHubPackages"
-      url = "https://maven.pkg.github.com/khvh/jacado"
-      credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
-      }
+        name = "KHVH"
+        url = "https://mvn.kube.khvh.dev/artifactory/khvh/"
+        credentials {
+            username = System.getenv("ARTIFACTORY_USER")
+            password = System.getenv("ARTIFACTORY_PW")
+        }
     }
   }
 }
