@@ -1,4 +1,4 @@
-package dev.khvh.jacado;
+package dev.khvh.jacado.setup;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
@@ -11,6 +11,9 @@ import dev.khvh.jacado.data.Database;
 
 public class AppDatabase implements Database {
 
+  public static final String DATABASE = "sample";
+  public static final String COLLECTION = "samples";
+
   @Override
   public ArangoCollection getCollection(String name) {
     return getDatabase().collection(name);
@@ -18,7 +21,7 @@ public class AppDatabase implements Database {
 
   @Override
   public ArangoDatabase getDatabase() {
-    return arangoDB().db(DbName.of("sample"));
+    return arangoDB().db(DbName.of(DATABASE));
   }
 
   private ArangoDB arangoDB() {
@@ -29,13 +32,22 @@ public class AppDatabase implements Database {
       mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     });
 
-    var builder = new ArangoDB.Builder()
+    var db = new ArangoDB.Builder()
       .serializer(jack)
       .host("localhost", 8529)
       .user("root")
-      .password("");
+      .password("")
+      .build();
 
-    return builder.build();
+    if (!db.db(DbName.of(DATABASE)).exists()) {
+      db.createDatabase(DbName.of(DATABASE));
+    }
+
+    if (!db.db(DbName.of(DATABASE)).collection(COLLECTION).exists()) {
+      db.db(DbName.of(DATABASE)).createCollection(COLLECTION);
+    }
+
+    return db;
   }
 
 }

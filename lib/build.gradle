@@ -54,12 +54,17 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
+    testImplementation 'com.github.goodforgod:arangodb-testcontainer:2.0.0'
+
+    api "org.testcontainers:testcontainers:1.16.0"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
+    testRuntimeOnly "ch.qos.logback:logback-classic:1.2.3"
+
+    testImplementation "org.testcontainers:junit-jupiter:1.16.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
 }
 
-testing {
-    suites {
-        test {
-            useJUnit('4.13.2')
-        }
-    }
+test {
+    useJUnitPlatform()
 }
