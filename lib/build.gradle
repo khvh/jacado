@@ -9,7 +9,7 @@ java {
 }
 
 group 'dev.khvh'
-version '0.0.3'
+version '0.0.4'
 
 repositories {
     mavenLocal()
@@ -21,7 +21,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'dev.khvh'
             artifactId = 'jacado'
-            version = '0.0.3'
+            version = '0.0.4'
 
             from components.java
         }
