@@ -114,7 +114,7 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
   public void delete(String key, Object value) {
     var doc = findOne(key, value).orElseThrow();
 
-    collection.updateDocument(doc.getKey(), doc);
+    collection.deleteDocument(doc.getKey());
   }
 
   public List<T> list() {
