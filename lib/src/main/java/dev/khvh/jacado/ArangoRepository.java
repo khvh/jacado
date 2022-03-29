@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.github.dockerjava.api.exception.NotFoundException;
 import dev.khvh.jacado.data.Collection;
 import dev.khvh.jacado.data.Database;
 import dev.khvh.jacado.data.Document;
@@ -94,8 +95,26 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
     return findOne(key).orElseThrow();
   }
 
+  public T update(String key, Object value, T entity) {
+    var doc = findOne(key, value).orElseThrow();
+
+    collection.updateDocument(doc.getKey(), entity);
+
+    return findOne(key, value).orElseThrow();
+  }
+
+  public void delete(String key) {
+    delete(findOne(key).orElseThrow());
+  }
+
   public void delete(T entity) {
     collection.deleteDocument(entity.getKey());
+  }
+
+  public void delete(String key, Object value) {
+    var doc = findOne(key, value).orElseThrow();
+
+    collection.updateDocument(doc.getKey(), doc);
   }
 
   public List<T> list() {
@@ -114,7 +133,7 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
     return collection.getDocuments(ids, itemClass).getDocuments().stream().toList();
   }
 
-  public List<T> list(String key, String value) {
+  public List<T> list(String key, Object value) {
     return database
       .getDatabase()
       .query(

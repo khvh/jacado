@@ -27,7 +27,7 @@ public interface Repository<T> {
 
   List<T> list(List<String> ids);
 
-  List<T> list(String key, String value);
+  List<T> list(String key, Object value);
 
   List<T> list(String q, Map<String, Object> props);
 

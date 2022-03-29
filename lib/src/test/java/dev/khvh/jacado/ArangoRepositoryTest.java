@@ -62,12 +62,47 @@ public class ArangoRepositoryTest {
   }
 
   @Test
+  void updateByKeyValue() {
+    var m = testRepository.persist(
+      new SampleModel()
+    );
+
+    m.name = "TEST";
+
+    m = testRepository.update("_key", m.getKey(), m);
+
+    Assertions.assertEquals(m.getName(), "TEST");
+  }
+
+  @Test
   void delete() {
     var m = testRepository.persist(
       new SampleModel()
     );
 
     testRepository.delete(m);
+
+    Assertions.assertTrue(testRepository.findOne(m.getKey()).isEmpty());
+  }
+
+  @Test
+  void deleteByKey() {
+    var m = testRepository.persist(
+      new SampleModel()
+    );
+
+    testRepository.delete(m.getKey());
+
+    Assertions.assertTrue(testRepository.findOne(m.getKey()).isEmpty());
+  }
+
+  @Test
+  void deleteByKeyValue() {
+    var m = testRepository.persist(
+      new SampleModel()
+    );
+
+    testRepository.delete("_key", m.getKey());
 
     Assertions.assertTrue(testRepository.findOne(m.getKey()).isEmpty());
   }
