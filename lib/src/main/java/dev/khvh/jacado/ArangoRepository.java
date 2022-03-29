@@ -12,6 +12,7 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.entity.DocumentCreateEntity;
 import dev.khvh.jacado.data.Collection;
 import dev.khvh.jacado.data.Database;
+import dev.khvh.jacado.data.Document;
 import dev.khvh.jacado.data.Repository;
 
 @SuppressWarnings("unchecked")
@@ -32,16 +33,7 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
     init();
   }
 
-  public void init() {
-    if (this.getClass().getAnnotation(Collection.class) != null) {
-      collectionName = this.getClass().getAnnotation(Collection.class).name();
-
-      collection = database.getCollection(
-        collectionName
-      );
-    }
-
-    Type genericSuperClass = getClass().getGenericSuperclass();
+  public void init() {Type genericSuperClass = getClass().getGenericSuperclass();
 
     ParameterizedType parametrizedType = null;
 
@@ -57,6 +49,14 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
       this.itemClass = (Class<T>) parametrizedType.getActualTypeArguments()[0];
     } catch (Exception e) {
       System.out.println(e.getMessage());
+    }
+
+    if (itemClass.getAnnotation(Document.class) != null) {
+      collectionName = itemClass.getAnnotation(Document.class).name();
+
+      collection = database.getCollection(
+        collectionName
+      );
     }
   }
 
