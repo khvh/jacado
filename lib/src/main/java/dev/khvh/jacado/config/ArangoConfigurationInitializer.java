@@ -1,33 +1,31 @@
 package dev.khvh.jacado.config;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.DbName;
+import com.arangodb.*;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.PersistentIndexOptions;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.khvh.jacado.Model;
+import dev.khvh.jacado.data.Database;
 import dev.khvh.jacado.data.Document;
 import dev.khvh.jacado.data.Index;
 import dev.khvh.jacado.data.Indexed;
-import io.quarkus.arc.DefaultBean;
 
-@Dependent
-public class ArangoConfigurationInitializer {
+public class ArangoConfigurationInitializer implements Database {
 
-  ArangoConfig config;
+  private ArangoConfig config;
+  private ArangoDB arangoInstance;
 
-  @Produces
-  @DefaultBean
+  public ArangoConfigurationInitializer(ArangoConfig arangoConfig) {
+    config = arangoConfig;
+  }
+
   public ArangoDB arangoDB() {
     var db = initBuilder().build();
 
@@ -35,17 +33,15 @@ public class ArangoConfigurationInitializer {
       db.createDatabase(DbName.of(config.db()));
     }
 
+    arangoInstance = db;
+
     return db;
   }
 
-  @Produces
-  @DefaultBean
   public ArangoDB arangoDB(List<Class<? extends Model>> models) {
     return arangoDB(models, false);
   }
 
-  @Produces
-  @DefaultBean
   public ArangoDB arangoDB(List<Class<? extends Model>> models, boolean dropCollections) {
     var db = arangoDB();
 
@@ -81,6 +77,8 @@ public class ArangoConfigurationInitializer {
         }
       });
     });
+
+    arangoInstance = db;
 
     return db;
   }
@@ -126,4 +124,13 @@ public class ArangoConfigurationInitializer {
       .toList();
   }
 
+  @Override
+  public ArangoCollection getCollection(String name) {
+    return getDatabase().collection(name);
+  }
+
+  @Override
+  public ArangoDatabase getDatabase() {
+    return arangoInstance.db(DbName.of(config.db()));
+  }
 }

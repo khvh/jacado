@@ -17,8 +17,7 @@ import dev.khvh.jacado.data.Repository;
 @SuppressWarnings("unchecked")
 public abstract class ArangoRepository <T extends Model> implements Repository<T> {
 
-  Database database;
-
+  private Database database;
   private ArangoCollection collection;
   private Class<T> itemClass;
   private String collectionName;
