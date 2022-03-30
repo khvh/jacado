@@ -1,5 +1,7 @@
 package dev.khvh.jacado.config;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Produces;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -17,11 +19,15 @@ import dev.khvh.jacado.Model;
 import dev.khvh.jacado.data.Document;
 import dev.khvh.jacado.data.Index;
 import dev.khvh.jacado.data.Indexed;
+import io.quarkus.arc.DefaultBean;
 
+@Dependent
 public class ArangoConfigurationInitializer {
 
   ArangoConfig config;
 
+  @Produces
+  @DefaultBean
   public ArangoDB arangoDB() {
     var db = initBuilder().build();
 
@@ -32,10 +38,14 @@ public class ArangoConfigurationInitializer {
     return db;
   }
 
+  @Produces
+  @DefaultBean
   public ArangoDB arangoDB(List<Class<? extends Model>> models) {
     return arangoDB(models, false);
   }
 
+  @Produces
+  @DefaultBean
   public ArangoDB arangoDB(List<Class<? extends Model>> models, boolean dropCollections) {
     var db = arangoDB();
 

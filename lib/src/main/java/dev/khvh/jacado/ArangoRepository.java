@@ -10,8 +10,6 @@ import java.util.Optional;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.DocumentCreateEntity;
-import com.github.dockerjava.api.exception.NotFoundException;
-import dev.khvh.jacado.data.Collection;
 import dev.khvh.jacado.data.Database;
 import dev.khvh.jacado.data.Document;
 import dev.khvh.jacado.data.Repository;
