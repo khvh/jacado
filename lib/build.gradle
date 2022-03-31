@@ -9,7 +9,7 @@ java {
 }
 
 group 'dev.khvh'
-version "git describe --tags --abbrev=0".execute().text
+version "git describe --tags --abbrev=0".execute().text.trim()
 
 repositories {
     mavenLocal()
@@ -21,7 +21,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'dev.khvh'
             artifactId = 'jacado'
-            version = "git describe --tags --abbrev=0".execute().text
+            version = "git describe --tags --abbrev=0".execute().text.trim()
 
             from components.java
         }
