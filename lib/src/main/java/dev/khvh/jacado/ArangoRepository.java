@@ -22,15 +22,6 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
   private Class<T> itemClass;
   private String collectionName;
 
-  public ArangoRepository() {
-  }
-
-  public ArangoRepository(Database database) {
-    this.database = database;
-
-    init();
-  }
-
   public void setDatabase(Database database) {
     this.database = database;
   }
