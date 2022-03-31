@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'com.corneliudascalu.autoversion' version '0.4'
 }
 
 java {
@@ -10,7 +9,7 @@ java {
 }
 
 group 'dev.khvh'
-version autoversion.code
+version "git describe --tags --abbrev=0".execute().text
 
 repositories {
     mavenLocal()
@@ -22,7 +21,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'dev.khvh'
             artifactId = 'jacado'
-            version = autoversion.code
+            version = "git describe --tags --abbrev=0".execute().text
 
             from components.java
         }
