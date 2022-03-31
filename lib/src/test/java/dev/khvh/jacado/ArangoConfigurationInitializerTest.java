@@ -4,6 +4,7 @@ import java.util.List;
 
 import dev.khvh.jacado.setup.Conf;
 import dev.khvh.jacado.setup.SampleModel;
+import dev.khvh.jacado.setup.TestConfiguration;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -26,14 +27,23 @@ public class ArangoConfigurationInitializerTest {
 
   @BeforeAll
   public static void setup() {
-    conf = new Conf();
+//    conf = new Conf();
   }
 
   @Test
   public void testIndexCreation() {
-    var adb = conf.arangoDB(List.of(SampleModel.class));
+//    var adb = conf.arangoDB(List.of(SampleModel.class));
+//
+//    Assertions.assertNotNull(adb);
+  }
 
-    Assertions.assertNotNull(adb);
+  @Test
+  public void testInitializer() {
+    var config = new TestConfiguration();
+
+    config.arangoDB();
+
+    Assertions.assertNotNull(config);
   }
 
 }

@@ -10,6 +10,8 @@ public interface ArangoConfig {
 
   String password();
 
+  Boolean drop();
+
   List<ArangoHostConfig> hosts();
 
 }

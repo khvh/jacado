@@ -1,9 +1,6 @@
 package dev.khvh.jacado.config;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import com.arangodb.*;
 import com.arangodb.entity.LoadBalancingStrategy;
@@ -12,10 +9,10 @@ import com.arangodb.model.PersistentIndexOptions;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.khvh.jacado.Model;
-import dev.khvh.jacado.data.Database;
-import dev.khvh.jacado.data.Document;
-import dev.khvh.jacado.data.Index;
-import dev.khvh.jacado.data.Indexed;
+import dev.khvh.jacado.data.*;
+import org.reflections.Reflections;
+
+import static org.reflections.scanners.Scanners.TypesAnnotated;
 
 public class ArangoConfigurationInitializer implements Database {
 
@@ -27,15 +24,48 @@ public class ArangoConfigurationInitializer implements Database {
   }
 
   public ArangoDB arangoDB() {
-    var db = initBuilder().build();
+    var _db = initBuilder().build();
 
-    if (!db.db(DbName.of(config.db())).exists()) {
-      db.createDatabase(DbName.of(config.db()));
+    var jc = this.getClass().getAnnotation(JacadoConfiguration.class);
+
+    if (jc != null) {
+      Arrays.stream(jc.packages()).forEach(pkg -> {
+        new Reflections(pkg).get(
+          TypesAnnotated.with(Document.class).asClass()
+        ).forEach(m -> {
+          try {
+            _db
+              .db(DbName.of(config.db()))
+              .createCollection(m.getAnnotation(Document.class).name());
+          } catch (ArangoDBException e) {
+            System.out.println(e.getMessage());
+          }
+
+          var coll = _db
+            .db(DbName.of(config.db()))
+              .collection(m.getAnnotation(Document.class).name());
+
+          Arrays.stream(m.getFields()).map(field -> {
+              var indexed = field.getAnnotation(Indexed.class);
+
+              return indexed == null
+                ? null
+                : new Index().setName(field.getName()).setUnique(indexed.unique());
+            })
+            .filter(Objects::nonNull)
+            .forEach(idx -> {
+              try {
+                coll.ensurePersistentIndex(
+                  List.of(idx.name), new PersistentIndexOptions().unique(idx.unique)
+                );
+              } catch (ArangoDBException e) {
+                System.out.printf("Index '%s' already exists, skipping", idx.name);
+              }
+            });
+        });
+      });
     }
-
-    arangoInstance = db;
-
-    return db;
+    return _db;
   }
 
   public ArangoDB arangoDB(List<Class<? extends Model>> models) {
@@ -43,6 +73,10 @@ public class ArangoConfigurationInitializer implements Database {
   }
 
   public ArangoDB arangoDB(List<Class<? extends Model>> models, boolean dropCollections) {
+    if (arangoInstance != null) {
+      return arangoInstance;
+    }
+
     var db = arangoDB();
 
     models.forEach(m -> {

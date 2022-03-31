@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'com.corneliudascalu.autoversion' version '0.4'
 }
 
 java {
@@ -9,7 +10,7 @@ java {
 }
 
 group 'dev.khvh'
-version '0.0.6'
+version autoversion.code
 
 repositories {
     mavenLocal()
@@ -21,7 +22,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'dev.khvh'
             artifactId = 'jacado'
-            version = '0.0.6'
+            version = autoversion.code
 
             from components.java
         }
@@ -47,6 +48,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2'
     implementation 'com.arangodb:arangodb-java-driver:6.16.1'
     implementation 'com.arangodb:jackson-dataformat-velocypack:3.0.0'
+    implementation 'org.reflections:reflections:0.10.2'
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'

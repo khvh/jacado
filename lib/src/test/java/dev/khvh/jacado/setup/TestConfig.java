@@ -28,6 +28,11 @@ public class TestConfig implements ArangoConfig {
   }
 
   @Override
+  public Boolean drop() {
+    return false;
+  }
+
+  @Override
   public List<ArangoHostConfig> hosts() {
     return List.of(
       new TestArangoHostConfig()
