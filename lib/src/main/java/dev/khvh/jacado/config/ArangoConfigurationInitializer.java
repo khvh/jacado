@@ -24,6 +24,10 @@ public class ArangoConfigurationInitializer implements Database {
   }
 
   public ArangoDB arangoDB() {
+    if (arangoInstance != null) {
+      return arangoInstance;
+    }
+
     var _db = initBuilder().build();
 
     var jc = this.getClass().getAnnotation(JacadoConfiguration.class);
@@ -65,7 +69,10 @@ public class ArangoConfigurationInitializer implements Database {
         });
       });
     }
-    return _db;
+
+    arangoInstance = _db;
+
+    return arangoInstance;
   }
 
   public ArangoDB arangoDB(List<Class<? extends Model>> models) {
