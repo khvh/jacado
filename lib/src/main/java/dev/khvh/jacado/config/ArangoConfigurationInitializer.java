@@ -172,6 +172,6 @@ public class ArangoConfigurationInitializer implements Database {
 
   @Override
   public ArangoDatabase getDatabase() {
-    return arangoInstance.db(DbName.of(config.db()));
+    return this.arangoDB().db(DbName.of(config.db()));
   }
 }
