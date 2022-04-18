@@ -74,7 +74,7 @@ public class AppDatabase implements Database {
   public ArangoDatabase getDatabase() {
     return arangoDB().db(DbName.of(arangoConfig.db()));
   }
-  
+
 }
 ```
 
@@ -123,6 +123,58 @@ public class SampleResource {
   @GET
   public List<Sample> list() {
     return sampleRepository.list();
+  }
+
+}
+```
+
+## As query builder (WIP)
+
+### As a standalone instance
+
+```java
+@ApplicationScoped
+public class ExampleService {
+
+  @Inject
+  AQL aql;
+
+  public List<Example> findAllExamplesByName(String name) {
+    return aql
+      .for(Collection.Examples)
+      .filter("name", name)
+      .findAll();
+  }
+
+  public Optional<Example> findOneByKey(String key) {
+    return aql
+      .for(Collection.Examples)
+      .filter("_key", key)
+      .findOneOptional();
+  }
+
+}
+```
+
+### As a builder
+
+```java
+@ApplicationScoped
+@Collection(name = "examples")
+public class ExampleBuilder extends AQLBuilder {
+
+  public List<Example> findAllExamplesByName(String name) {
+    return aql
+      .for(Collection.Examples)
+      .filter("name", name)
+      .findAll();
+  }
+
+  public Optional<Example> findOneByKey(String key) {
+    return aql
+      .for(Collection.Examples)
+      .filter("_key", key)
+      .findOneOptional();
   }
 
 }

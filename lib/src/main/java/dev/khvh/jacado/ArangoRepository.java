@@ -3,6 +3,7 @@ package dev.khvh.jacado;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,8 +11,11 @@ import java.util.Optional;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.khvh.jacado.data.Database;
 import dev.khvh.jacado.data.Document;
+import dev.khvh.jacado.data.Ref;
 import dev.khvh.jacado.data.Repository;
 
 @SuppressWarnings("unchecked")
@@ -67,6 +71,12 @@ public abstract class ArangoRepository <T extends Model> implements Repository<T
   }
 
   public T persist(T entity) {
+    if (Arrays.stream(entity.getClass().getFields()).anyMatch(f -> f.getAnnotation(Ref.class) != null)) {
+      var om = new ObjectMapper();
+
+      var val = om.convertValue(entity, new TypeReference<Map<String, Object>>() {});
+    }
+
     var key = collection
       .insertDocument(
         entity

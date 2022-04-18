@@ -1,9 +1,8 @@
 package dev.khvh.jacado.setup;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
+import java.util.List;
+
+import com.arangodb.*;
 import com.arangodb.mapping.ArangoJack;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -12,7 +11,11 @@ import dev.khvh.jacado.data.Database;
 public class AppDatabase implements Database {
 
   public static final String DATABASE = "sample";
-  public static final String COLLECTION = "samples";
+  public static final List<String> COLLECTIONS = List.of(
+    "samples",
+    "ones",
+    "twos"
+  );
 
   @Override
   public ArangoCollection getCollection(String name) {
@@ -43,9 +46,13 @@ public class AppDatabase implements Database {
       db.createDatabase(DbName.of(DATABASE));
     }
 
-    if (!db.db(DbName.of(DATABASE)).collection(COLLECTION).exists()) {
-      db.db(DbName.of(DATABASE)).createCollection(COLLECTION);
-    }
+    COLLECTIONS.forEach(COLLECTION -> {
+      try {
+        db.db(DbName.of(DATABASE)).createCollection(COLLECTION);
+      } catch (ArangoDBException e) {
+        System.out.println(e.getMessage());
+      }
+    });
 
     return db;
   }
