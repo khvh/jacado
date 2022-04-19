@@ -180,6 +180,57 @@ public class ExampleBuilder extends AQLBuilder {
 }
 ```
 
+### As a repository
+
+```java
+import java.util.Optional;
+
+@ApplicationScoped
+@Collection(DatabaseCollection.Example)
+public class ExampleRepository extends ArangoRepository<Example> {
+
+  @Inject
+  AQLCollection collection;
+
+  // FOR example IN examples FILTER example._key == @key RETURN example
+  public Optional<Example> findAnExample(String key) {
+    return collection.filter(Example.Key, key).findOneOptional();
+  }
+  
+  // FOR e IN examples FILTER e.email == @email AND e.field == @field RETURN e
+  public List<Example> listExamplesByEmailAndSomeField(String email, String field) {
+    return collection
+      .filter(Example.Email, email)
+      .filter(Example.Field, field)
+      .findAll();
+  }
+  // FOR e IN examples FILTER e.email == @email LIMIT @limit RETURN e
+  public List<Example> examples(String email, Pagination pagination) {
+    return collection
+      .filter(Example.Email, email)
+      .paginate(pagination)
+      .findAll();
+  }
+
+  // FOR e IN examples FILTER e.email == @email LIMIT @limit SORT e.@sortKey @sortDir RETURN e
+  public List<Example> examples(String email, Pagination pagination, Sort sort) {
+    return collection
+      .filter(Example.Email, email)
+      .paginate(pagination)
+      .sort(sort)
+      .findAll();
+  }
+  
+  public List<Example> withRaw(String email) {
+    return collection
+      .filter(Example.Email, email)
+      .raw(String.format("SEARCH e.text == %s", "asd"))
+      .findAll();
+  }
+
+}
+```
+
 ## License
 
 [MIT](./LICENSE)
