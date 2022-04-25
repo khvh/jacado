@@ -1,81 +1,82 @@
 package dev.khvh.jacado.builder;
 
-import java.util.HashMap;
+import java.awt.image.SampleModel;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabase;
-import com.fasterxml.jackson.core.type.TypeReference;
 import dev.khvh.jacado.Model;
-import dev.khvh.jacado.data.Builder;
+import dev.khvh.jacado.data.Database;
+import dev.khvh.jacado.data.Document;
 
-public class AQLBuilder<T extends Model> implements Builder<T> {
-  private String aql = "";
+@SuppressWarnings("unchecked")
+public class AQLBuilder<T extends Model> {
 
-  public AQLBuilder() {
+  private final UUID id;
+  private AQLQuery query;
+  private Database database;
+  private Class<T> itemClass;
 
+  public AQLBuilder(Database database) {
+    id = UUID.randomUUID();
+    this.database = database;
+    parseType();
   }
 
-  public AQLBuilder(ArangoDatabase db) {
-
+  public AQL<T> use(String collection) {
+    return new AQL<T>(collection, new AQLBuilder<T>(database));
   }
 
-  public Builder<T> createCollection(String collectionName) {
+  public List<Model> exec() {
+    return null;
+  }
+
+  public AQLBuilder<T> setQuery(AQLQuery query) {
+    this.query = query;
+
     return this;
   }
 
-  @Override
-  public Builder<T> collection(String collectionName) {
-    return null;
+  public AQLQuery getQuery() {
+    return query;
   }
 
-  @Override
-  public Builder<T> insert(T data) {
-
-    return this;
+  public String toString() {
+    return "[" + id + "]";
   }
 
-  @Override
-  public Builder<T> filter(String key, Object value) {
-
-    return this;
+  public List<T> findAll() {
+    return database
+      .getDatabase()
+      .query(String.join(" ", query.getQuery()), query.getProps(), itemClass)
+      .stream()
+      .toList();
   }
 
-  @Override
-  public Builder<T> update(String key, Object value) {
-    return null;
+  public Optional<T> findOne() {
+    query.getQuery().add(" RETURN x");
+
+    return database
+      .getDatabase()
+      .query(String.join(" ", query.getQuery()), query.getProps(), itemClass)
+      .stream()
+      .findFirst();
   }
 
-  @Override
-  public Builder<T> replace(String key, Object value) {
-    return null;
-  }
+  private void parseType() {
+    Type genericSuperClass = getClass();
 
-  @Override
-  public T one() {
-    return null;
-  }
+    var parametrizedType = (ParameterizedType) getClass()
+      .getGenericSuperclass();
+//    ParameterizedType parametrizedType = ((ParameterizedType) getClass()
+//      .getGenericSuperclass()).getActualTypeArguments()[0];
 
-  @Override
-  public T one(TypeReference<T> ref) {
-    return null;
+    try {
+      this.itemClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
   }
-
-  @Override
-  public List<T> list() {
-    return null;
-  }
-
-  @Override
-  public List<T> list(TypeReference<List<T>> ref) {
-    return null;
-  }
-
-  @Override
-  public String toAQL() {
-    return "";
-  }
-
 }

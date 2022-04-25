@@ -7,6 +7,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.fasterxml.jackson.core.type.TypeReference;
+import dev.khvh.jacado.setup.AppDatabase;
 import dev.khvh.jacado.setup.SampleModel;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Assertions;
@@ -38,20 +39,17 @@ class AQLBuilderTest {
   void test1() {
     initDatabase();
 
-    var aql = new AQL();
+    var builder = new AQLBuilder<SampleModel>(new AppDatabase());
 
-    aql
-      .select("coll1")
-      .filter()
-      .by("x.col1 == @b", Map.of("b", "c"))
-      .and()
-      .by("x.col2 == 'asd'")
-      .and()
-      .by("x.col3 == @c", "c", 1)
-      .sort("x.col1", AQLSortDirection.ASC)
-      .limit(0, 100);
-    
-    Assertions.assertEquals(Q1, aql.toQuery().getAql());
+    var q = builder
+      .use("samples")
+      .build();
+
+    System.out.println("==============");
+    System.out.println(builder);
+    System.out.println(q.getQuery());
+    System.out.println(q.findOne());
+    System.out.println("==============");
   }
 
   private void initDatabase() {

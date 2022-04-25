@@ -141,14 +141,14 @@ public class ExampleService {
 
   public List<Example> findAllExamplesByName(String name) {
     return aql
-      .for(Collection.Examples)
+      .use(Collection.Examples)
       .filter("name", name)
       .findAll();
   }
 
   public Optional<Example> findOneByKey(String key) {
     return aql
-      .for(Collection.Examples)
+      .use(Collection.Examples)
       .filter("_key", key)
       .findOneOptional();
   }
@@ -165,14 +165,14 @@ public class ExampleBuilder extends AQLBuilder {
 
   public List<Example> findAllExamplesByName(String name) {
     return aql
-      .for(Collection.Examples)
+      .use(Collection.Examples)
       .filter("name", name)
       .findAll();
   }
 
   public Optional<Example> findOneByKey(String key) {
     return aql
-      .for(Collection.Examples)
+      .use(Collection.Examples)
       .filter("_key", key)
       .findOneOptional();
   }

@@ -1,5 +1,8 @@
 package dev.khvh.jacado.builder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
@@ -13,7 +16,7 @@ import lombok.experimental.Accessors;
 @ToString
 public class AQLQuery {
 
-  private String aql;
-  private Map<String, Object> props;
+  private List<String> query = new ArrayList<>();
+  private Map<String, Object> props = new HashMap<>();
 
 }

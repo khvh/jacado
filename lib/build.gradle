@@ -48,6 +48,8 @@ dependencies {
     implementation 'com.arangodb:arangodb-java-driver:6.16.1'
     implementation 'com.arangodb:jackson-dataformat-velocypack:3.0.0'
     implementation 'org.reflections:reflections:0.10.2'
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation "ch.qos.logback:logback-core:1.2.3"
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
