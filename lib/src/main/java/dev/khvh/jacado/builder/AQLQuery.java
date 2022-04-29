@@ -19,4 +19,8 @@ public class AQLQuery {
   private List<String> query = new ArrayList<>();
   private Map<String, Object> props = new HashMap<>();
 
+  public String asString() {
+    return String.join(" ", query);
+  }
+
 }

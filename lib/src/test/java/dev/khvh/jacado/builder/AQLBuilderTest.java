@@ -1,6 +1,7 @@
 package dev.khvh.jacado.builder;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.arangodb.ArangoDB;
@@ -39,16 +40,16 @@ class AQLBuilderTest {
   void test1() {
     initDatabase();
 
-    var builder = new AQLBuilder<SampleModel>(new AppDatabase());
+    var builder = new AQLBuilder<SampleModel>();
 
     var q = builder
       .use("samples")
+      .filter("some", "value")
       .build();
 
+
     System.out.println("==============");
-    System.out.println(builder);
-    System.out.println(q.getQuery());
-    System.out.println(q.findOne());
+    System.out.println(q.getQuery().asString());
     System.out.println("==============");
   }
 
